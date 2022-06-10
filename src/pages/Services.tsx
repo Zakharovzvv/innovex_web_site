@@ -1,10 +1,11 @@
 import React, {FC} from 'react';
+import MainLayout from "../layouts/MainLayout";
 
 const Services :FC= () => {
     return (
-        <div>
+        <MainLayout>
             Services
-        </div>
+        </MainLayout>
     );
 };
 

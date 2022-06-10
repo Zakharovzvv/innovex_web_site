@@ -1,10 +1,11 @@
 import React, {FC} from 'react';
+import MainLayout from "../layouts/MainLayout";
 
 const Value :FC= () => {
     return (
-        <div>
+        <MainLayout>
             Value
-        </div>
+        </MainLayout>
     );
 };
 

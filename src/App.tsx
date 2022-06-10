@@ -1,9 +1,8 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {FC} from 'react';
+import './App.sass';
 import AppRouter from "./components/AppRouter";
 
-function App() {
+const App:FC =()=> {
     return (
         <div className="App">
             <AppRouter/>

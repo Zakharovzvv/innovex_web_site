@@ -1,10 +1,11 @@
 import React, {FC} from 'react';
+import MainLayout from "../layouts/MainLayout";
 
 const About :FC= () => {
     return (
-        <div>
+        <MainLayout>
             About
-        </div>
+        </MainLayout>
     );
 };
 

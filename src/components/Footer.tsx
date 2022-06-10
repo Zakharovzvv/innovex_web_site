@@ -1,11 +1,11 @@
 import React, {FC} from 'react';
 
-const Login :FC = () => {
+const Footer :FC = () => {
     return (
         <div>
-
+Footer
         </div>
     );
 };
 
-export default Login;
+export default Footer
