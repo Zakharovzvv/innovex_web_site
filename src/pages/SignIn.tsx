@@ -1,22 +1,14 @@
-import React, {useState, FC} from 'react';
-import PersonIcon from '@mui/icons-material/Person';
+import React, {FC, useState} from 'react';
 import LockIcon from '@mui/icons-material/Lock';
 import EmailIcon from '@mui/icons-material/Email';
-
-import {
-    Box,
-    Card,
-    Container,
-    FormControl,
-    TextField,
-    Typography,
-    Stack,
-    Button,
-    FormControlLabel,
-    Checkbox, InputAdornment
-} from "@mui/material";
+//import LoadingButton from '@mui/lab/LoadingButton;
+import {Alert, Box, Button, Container, InputAdornment, Stack, TextField, Typography} from "@mui/material";
 import {GlobalValues} from "../utils/variables";
 import {useNavigate} from "react-router-dom";
+import {useDispatch} from "react-redux";
+import {AuthActionCreators} from "../store/reducers/auth/actionCreators";
+import {useTypedSelector} from "../hooks/useTypedSelector";
+import { LoadingButton } from '@mui/lab';
 
 export const defaultFormValues = {
     email: '',
@@ -44,18 +36,30 @@ export const defaultFormValues = {
 const SignIp: FC = () => {
     const [formValues, setFormValues] = useState(defaultFormValues)
     const navigation = useNavigate()
+    const dispatch=useDispatch()
+    const {isLoading,error}=useTypedSelector(state=>state.auth)
+
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const {name, value} = e.target
         setFormValues({...formValues, [name]: value})
     }
 
-    const handleFormSubmit = (e: React.FormEvent<HTMLInputElement>): void => {
+    const handleFormSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        navigation('Home');
+        // @ts-ignore
+        dispatch(AuthActionCreators.login(formValues.email,formValues.password))
+        //navigation('/Home');
     }
 
     return (
         <Container>
+            {error && <Alert
+                severity="error"
+                onClose={() => {
+                    dispatch(AuthActionCreators.setError(''))
+                    setFormValues({...formValues,...defaultFormValues})
+                }}>{error}</Alert>}
+
             <Box sx={{
                 display: 'flex',
                 alignItems: 'center',
@@ -81,14 +85,11 @@ const SignIp: FC = () => {
                 gap: 2,
             }}>
                 <Typography variant="h4">Вход</Typography>
-                <Stack spacing={3} mt={3}>
+                <Stack spacing={3} mt={3} mb={1}>
                     <Button variant="outlined" size="large" onClick={()=>{navigation('/signin')}}>Sign up with Google</Button>
                     <Typography mt={3} >or use your email to sign in:</Typography>
                 </Stack>
-                <FormControl onSubmit={handleFormSubmit} sx={{
-                    width: '100%',
-                    marginTop: 1
-                }}>
+                <form onSubmit={handleFormSubmit} >
                     <Stack spacing={1}>
                        <TextField
                             id='email-input'
@@ -127,14 +128,14 @@ const SignIp: FC = () => {
                         <Stack spacing={2}>
                             <Typography >I forgot my password</Typography>
 
-                            <Button  variant="contained" size="large" type="submit">
+                            <LoadingButton loading={isLoading} variant="contained" size="large" type="submit">
                                 Войти
-                            </Button>
+                            </LoadingButton>
                         </Stack>
                     </Stack>
 
 
-                </FormControl>
+                </form>
             </Box>
 
         </Container>

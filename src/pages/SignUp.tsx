@@ -50,9 +50,9 @@ const SignUp: FC = () => {
         setFormValues({...formValues, [name]: value})
     }
 
-     const handleFormSubmit = (e: React.FormEvent<HTMLInputElement>): void => {
+     const handleFormSubmit = (e: React.FormEvent) => {
          e.preventDefault();
-         navigation('Home');
+         navigation('/Home');
      }
 
     return (
@@ -82,10 +82,7 @@ const SignUp: FC = () => {
                 gap: 2,
             }}>
                 <Typography variant="h4">Регистрация</Typography>
-                <FormControl onSubmit={handleFormSubmit} sx={{
-                    width: '100%',
-                    marginTop: 4
-                }}>
+                <form onSubmit={handleFormSubmit} >
                     <Stack spacing={1}>
                         <TextField
                             id='name-input'
@@ -154,7 +151,7 @@ const SignUp: FC = () => {
                     </Stack>
 
 
-                </FormControl>
+                </form>
             </Box>
 
         </Container>
