@@ -81,7 +81,7 @@ const SignUp: FC = () => {
                 maxWidth: '360px',
                 gap: 2,
             }}>
-                <Typography variant="h4">Регистрация</Typography>
+                <Typography variant="h2">Создать аккаунт</Typography>
                 <form onSubmit={handleFormSubmit} >
                     <Stack spacing={1}>
                         <TextField

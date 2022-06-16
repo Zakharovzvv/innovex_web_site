@@ -1,24 +1,57 @@
 import * as React from 'react';
 import {useEffect, useState} from 'react';
-import {AppBar,Box,Toolbar,IconButton,Typography,Menu,Container,Avatar,Button,Tooltip,MenuItem} from '@mui/material';
+import {
+    AppBar,
+    Box,
+    Toolbar,
+    IconButton,
+    Typography,
+    Menu,
+    Container,
+    Avatar,
+    Button,
+    Tooltip,
+    MenuItem,
+    Stack
+} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import AdbIcon from '@mui/icons-material/Adb';
 import SearchComponent from "./SearchComponent";
-import {IRoute, privateRoutes, publicRoutes} from "../router";
-import {Link} from "react-router-dom";
-import {useTypedSelector} from "../hooks/useTypedSelector";
+import {IRoute, privateRoutes, initialRoutes, RoutePaths} from "../../router";
+import {Link, useNavigate} from "react-router-dom";
+import {useTypedSelector} from "../../hooks/useTypedSelector";
+import {AuthActionCreators} from "../../store/reducers/auth/authActionCreators";
+import {useDispatch} from "react-redux";
+import {useActions} from "../../hooks/useActions";
 
 
 const ResponsiveAppBar = () => {
-    const settings = ['Sign in', 'Sign up', 'Log out'];
     const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
-    const [anchorElUser, setAnchorElUser] =useState<null | HTMLElement>(null);
-    const {isAuth} = useTypedSelector(state => state.auth)
-    const [pages,setPages]=useState<IRoute[]>([])
+    const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
+    const {isAuth, user} = useTypedSelector(state => state.authSlice)
+ //   const {isAuth, user} = useTypedSelector(state => state.auth)
+    const [pages, setPages] = useState<IRoute[]>([])
+    const [userMenu, setUserMenu] = useState<IUserMenu[]>([])
+    const navigation = useNavigate()
+//    const dispatch = useDispatch()
+    const {logout}=useActions()
 
+    interface IUserMenu {
+        name: string,
+        routePath?: string,
+        isViewThenLogged?: boolean,
+    }
+
+    const initialUserMenu: IUserMenu[] = [
+        {name: "Login", routePath: RoutePaths.SIGNIN},
+        {name: "Sign up", routePath: RoutePaths.SIGNUP},
+        {name: "Logout", isViewThenLogged: true},
+    ]
 
     useEffect(() => {
-        setPages(isAuth ? publicRoutes : privateRoutes)
+        //  setPages(isAuth ? publicRoutes : privateRoutes)
+        setPages(isAuth ? initialRoutes.filter(rote => rote.isMainMenu != false) : initialRoutes.filter(rote => rote.isMainMenu != false && rote.isPrivate != true))
+        setUserMenu(isAuth ? initialUserMenu.filter(item => item.isViewThenLogged === true) : initialUserMenu.filter(item => item.isViewThenLogged != true))
     }, [isAuth])
 
 
@@ -33,8 +66,16 @@ const ResponsiveAppBar = () => {
         setAnchorElNav(null);
     };
 
-    const handleCloseUserMenu = () => {
+    const handleCloseUserMenu = (event: React.MouseEvent<HTMLElement>, routePath?: string) => {
         setAnchorElUser(null);
+        if (routePath) {
+            navigation(routePath)
+        } else {
+ //           // @ts-ignore
+ //           dispatch(AuthActionCreators.logout())
+            logout()
+        }
+
     };
 
     return (
@@ -87,7 +128,7 @@ const ResponsiveAppBar = () => {
                                 display: {xs: 'block', md: 'none'},
                             }}
                         >
-                            {pages.map(({pageName,path}) => (
+                            {pages.map(({pageName, path}) => (
                                 <MenuItem key={path} onClick={handleCloseNavMenu}>
                                     <Link to={path}> <Typography
                                         textAlign="center">{pageName}</Typography></Link>
@@ -113,7 +154,7 @@ const ResponsiveAppBar = () => {
                         LOGO
                     </Typography>
                     <Box sx={{flexGrow: 1, display: {xs: 'none', md: 'flex'}}}>
-                        {pages.map(({pageName,path}) => (
+                        {pages.map(({pageName, path}) => (
                             <Link to={path} key={path}>
                                 <Button
                                     onClick={handleCloseNavMenu}
@@ -127,11 +168,17 @@ const ResponsiveAppBar = () => {
 
                     <SearchComponent/>
                     <Box sx={{flexGrow: 0}}>
-                        <Tooltip title="Open settings">
-                            <IconButton onClick={handleOpenUserMenu} sx={{p: 0}}>
-                                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg"/>
-                            </IconButton>
-                        </Tooltip>
+                        <Stack direction="row" spacing={1}>
+                            <Tooltip title="Open settings">
+                                <IconButton onClick={handleOpenUserMenu} sx={{p: 0}}>
+                                    <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg"/>
+                                </IconButton>
+                            </Tooltip>
+                            <Typography sx={{
+                                display: "inline-block",
+                                verticalAlign: "middle",
+                            }}>{user.username}</Typography>
+                        </Stack>
                         <Menu
                             sx={{mt: '45px'}}
                             id="menu-appbar"
@@ -148,9 +195,9 @@ const ResponsiveAppBar = () => {
                             open={Boolean(anchorElUser)}
                             onClose={handleCloseUserMenu}
                         >
-                            {settings.map((setting) => (
-                                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                                    <Typography textAlign="center">{setting}</Typography>
+                            {userMenu.map(({name, routePath}) => (
+                                <MenuItem key={name} onClick={(event) => handleCloseUserMenu(event, routePath)}>
+                                    <Typography textAlign="center">{name}</Typography>
                                 </MenuItem>
                             ))}
                         </Menu>

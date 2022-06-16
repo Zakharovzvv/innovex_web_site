@@ -12,9 +12,11 @@ export interface IRoute{
     path:string,
     element:React.ComponentType,
     pageName:string,
+    isPrivate?:boolean,
+    isMainMenu?:boolean,
 }
 
-export enum RouteNames{
+export enum RoutePaths{
     HOME='/home',
     SERVICES='/services',
     VALUE='/value',
@@ -25,21 +27,16 @@ export enum RouteNames{
     SIGNUP='/signup',
 }
 
-export const publicRoutes: IRoute[]=[
-    {path:RouteNames.HOME, element: Home, pageName:"Home" },
-    {path:RouteNames.SERVICES, element: Services, pageName:"Services" },
-    {path:RouteNames.VALUE, element: Value, pageName:"Value" },
-    {path:RouteNames.BLOG, element: Blog, pageName:"Blog" },
-    {path:RouteNames.CAREERS, element: Careers, pageName:"Careers" },
-    {path:RouteNames.ABOUT, element: About, pageName:"About" },
-    {path:RouteNames.SIGNIN, element: SignIn, pageName:"Sign in" },
-    {path:RouteNames.SIGNUP, element: SignUp, pageName:"Sig up" },
+export const initialRoutes: IRoute[]=[
+    {path:RoutePaths.HOME, element: Home, pageName:"Home", },
+    {path:RoutePaths.SERVICES, element: Services, pageName:"Services" },
+    {path:RoutePaths.VALUE, element: Value, pageName:"Value" },
+    {path:RoutePaths.BLOG, element: Blog, pageName:"Blog" },
+    {path:RoutePaths.CAREERS, element: Careers, pageName:"Careers" },
+    {path:RoutePaths.ABOUT, element: About, pageName:"About", isPrivate:true},
+    {path:RoutePaths.SIGNIN, element: SignIn, pageName:"Sign in",isMainMenu:false},
+    {path:RoutePaths.SIGNUP, element: SignUp, pageName:"Sig up",isMainMenu:false },
 ]
 
 export const privateRoutes: IRoute[]=[
-    {path:RouteNames.HOME, element: Home, pageName:"Home" },
-    {path:RouteNames.SERVICES, element: Services, pageName:"Services" },
-    {path:RouteNames.VALUE, element: Value, pageName:"Value" },
-    {path:RouteNames.SIGNIN, element: SignIn, pageName:"Sign in" },
-    {path:RouteNames.SIGNUP, element: SignUp, pageName:"Sig up" },
 ]

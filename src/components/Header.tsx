@@ -1,5 +1,5 @@
 import React, {FC} from 'react';
-import AppBar from "./AppBar";
+import AppBar from "./UI/AppBar";
 
 
 const Header: FC = () => {

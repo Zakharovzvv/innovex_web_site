@@ -6,9 +6,10 @@ import {Alert, Box, Button, Container, InputAdornment, Stack, TextField, Typogra
 import {GlobalValues} from "../utils/variables";
 import {useNavigate} from "react-router-dom";
 import {useDispatch} from "react-redux";
-import {AuthActionCreators} from "../store/reducers/auth/actionCreators";
+import {AuthActionCreators} from "../store/reducers/auth/authActionCreators";
 import {useTypedSelector} from "../hooks/useTypedSelector";
-import { LoadingButton } from '@mui/lab';
+import {LoadingButton} from '@mui/lab';
+import {useActions} from "../hooks/useActions";
 
 export const defaultFormValues = {
     email: '',
@@ -36,8 +37,10 @@ export const defaultFormValues = {
 const SignIp: FC = () => {
     const [formValues, setFormValues] = useState(defaultFormValues)
     const navigation = useNavigate()
-    const dispatch=useDispatch()
-    const {isLoading,error}=useTypedSelector(state=>state.auth)
+//    const dispatch=useDispatch()
+       const {login} = useActions()
+ //   const {isLoading, error} = useTypedSelector(state => state.auth)
+    const {isLoading, error} = useTypedSelector(state => state.authSlice)
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const {name, value} = e.target
@@ -47,8 +50,9 @@ const SignIp: FC = () => {
     const handleFormSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         // @ts-ignore
-        dispatch(AuthActionCreators.login(formValues.email,formValues.password))
-        //navigation('/Home');
+        //  dispatch(AuthActionCreators.login(formValues.email,formValues.password))
+        login(formValues.email, formValues.password)
+        if (!error) navigation('/Home');
     }
 
     return (
@@ -56,8 +60,9 @@ const SignIp: FC = () => {
             {error && <Alert
                 severity="error"
                 onClose={() => {
-                    dispatch(AuthActionCreators.setError(''))
-                    setFormValues({...formValues,...defaultFormValues})
+                    //dispatch(AuthActionCreators.setError(''))
+ //                   setError('')
+                    setFormValues({...formValues, ...defaultFormValues})
                 }}>{error}</Alert>}
 
             <Box sx={{
@@ -77,7 +82,9 @@ const SignIp: FC = () => {
                     <Typography variant="h4">{GlobalValues.COMPANY_NAME}</Typography>
 
                 </Box>
-                <Button variant="outlined" size="large" onClick={()=>{navigation('/signup')}}>Sign up</Button>
+                <Button variant="outlined" size="large" onClick={() => {
+                    navigation('/signup')
+                }}>Sign up</Button>
             </Box>
             <Box sx={{
                 margin: '0 auto',
@@ -86,12 +93,14 @@ const SignIp: FC = () => {
             }}>
                 <Typography variant="h4">Вход</Typography>
                 <Stack spacing={3} mt={3} mb={1}>
-                    <Button variant="outlined" size="large" onClick={()=>{navigation('/signin')}}>Sign up with Google</Button>
-                    <Typography mt={3} >or use your email to sign in:</Typography>
+                    <Button variant="outlined" size="large" onClick={() => {
+                        navigation('/signin')
+                    }}>Sign up with Google</Button>
+                    <Typography mt={3}>or use your email to sign in:</Typography>
                 </Stack>
-                <form onSubmit={handleFormSubmit} >
+                <form onSubmit={handleFormSubmit}>
                     <Stack spacing={1}>
-                       <TextField
+                        <TextField
                             id='email-input'
                             required
                             name='email'
@@ -126,7 +135,7 @@ const SignIp: FC = () => {
                             }}
                         />
                         <Stack spacing={2}>
-                            <Typography >I forgot my password</Typography>
+                            <Typography>I forgot my password</Typography>
 
                             <LoadingButton loading={isLoading} variant="contained" size="large" type="submit">
                                 Войти
